@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^login/$', views.login, {'template_name': 'login.html'}),
     url(r'^logout/$', views.logout, {'next_page': '/login'}),
     url(r'^conversation$', broadcast),
+    url(r'^conversations/$', conversations),
 ]

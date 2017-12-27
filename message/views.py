@@ -29,3 +29,12 @@ def broadcast(request):
     pusher.trigger(u'a_channel', u'an_event', message)
     # return a json response of the broadcasted message
     return JsonResponse(message, safe=False)
+
+
+#return all conversations in the database
+def conversations(request):
+    data = Conversation.objects.all()
+    # loop through the data and create a new list from them. Alternatively, we can serialize the whole object and send the serialized response 
+    data = [{'name': person.user.username, 'status': person.status, 'message': person.message, 'id': person.id} for person in data]
+    # return a json response of the broadcasted messgae
+    return JsonResponse(data, safe=False)
