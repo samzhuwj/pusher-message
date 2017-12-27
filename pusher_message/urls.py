@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
+from django.contrib.auth import views
 
 from message.views import *
 
@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^logout/$', views.logout, {'next_page': '/login'}),
     url(r'^conversation$', broadcast),
     url(r'^conversations/$', conversations),
+    url(r'^conversations/(?P<id>[-\w]+)/delivered$',delivered)
 ]

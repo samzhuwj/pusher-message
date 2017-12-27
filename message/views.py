@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -38,3 +38,19 @@ def conversations(request):
     data = [{'name': person.user.username, 'status': person.status, 'message': person.message, 'id': person.id} for person in data]
     # return a json response of the broadcasted messgae
     return JsonResponse(data, safe=False)
+
+
+#use the csrf_exempt decorator to exempt this function from csrf checks
+@csrf_exempt
+def delivered(request, id):
+    message = Conversation.objects.get(pk=id);
+    # verify it is not the same user who sent the message that wants to trigger a delivered event
+    if request.user.id != message.user.id:
+        socket_id = request.POST.get('socket_id', '')
+        message.status = 'Delivered';
+        message.save();
+        message = {'name': message.user.username, 'status': message.status, 'message': message.message, 'id': message.id}
+        pusher.trigger(u'a_channel', u'delivered_message', message, socket_id)
+        return HttpResponse('ok');
+    else:
+        return HttpResponse('Awaiting Delivery');
